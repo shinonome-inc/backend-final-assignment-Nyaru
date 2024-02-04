@@ -13,7 +13,8 @@ class SignupView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         username = form.cleaned_data["username"]
-        password = form.cleaned_data["password"]
+        # パスワード入力確認処理をしているため
+        password = form.cleaned_data["password1"]
         user = authenticate(self.request, username=username, password=password)
         login(self.request, user)
         return response
