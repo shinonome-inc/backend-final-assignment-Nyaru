@@ -10,11 +10,13 @@ class TestSignupView(TestCase):
     def setUp(self):
         self.url = reverse("accounts:signup")
 
+    # get test
     def test_success_get(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/signup.html")
-
+    
+    # post test
     def test_success_post(self):
         valid_data = {
             "username": "testuser",
@@ -34,6 +36,26 @@ class TestSignupView(TestCase):
         self.assertTrue(User.objects.filter(username=valid_data["username"]).exists())
         # 3の確認 = ログイン状態になること
         self.assertIn(SESSION_KEY, self.client.session)
+
+    #異常系test
+    def test_failure_post_with_empty_username(self):
+        invalid_data = {
+            "username": "",
+            "email": "test@test.com",
+            "password1": "testpassword",
+            "password2": "testpassword",
+        }
+        response = self.client.post(self.url, invalid_data)
+        form = response.context["form"]
+
+        #don't redirect
+        self.assertEqual(response.status_code, 200)
+        #exist error
+        self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
+        #よくわからん
+        self.assertFalse(form.is_valid())
+        #Error message
+        self.assertIn("このフィールドは必須です。", form.errors["username"])    
 
 # class TestSignupView(TestCase):
 #     def test_success_get(self):
