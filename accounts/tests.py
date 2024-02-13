@@ -171,7 +171,7 @@ class TestSignupView(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("このパスワードは ユーザー名 と似すぎています。", form.errors["password2"])
 
-    # Test Case 11 
+    # Test Case 11
     def test_failure_post_with_only_numbers_password(self):
         invalid_data = {
             "username": "testuser",

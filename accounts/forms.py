@@ -9,10 +9,13 @@ class SignupForm(UserCreationForm):
         model = User  # model = get_user_model() は NG
         fields = ("username", "email")  # Remove trailing whitespace
 
+
 class LoginForm(AuthenticationForm):
     class Meta:
         model = User
         fields = ("username", "password")  # Remove trailing whitespace
+
+
 # password1, password2というフィールドはUserCreationFormの方で設定されているため、
 # fieldsの欄には、Userモデルの中にある、
 # blankにはできない値であるusernameとemailをセットする。
