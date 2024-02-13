@@ -15,7 +15,7 @@ class TestSignupView(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/signup.html")
-    
+
     # post test
     def test_success_post(self):
         valid_data = {
@@ -32,13 +32,33 @@ class TestSignupView(TestCase):
             status_code=302,
             target_status_code=200,
         )
-		# 2の確認 = ユーザーが作成されること
+        # 2の確認 = ユーザーが作成されること
         self.assertTrue(User.objects.filter(username=valid_data["username"]).exists())
         # 3の確認 = ログイン状態になること
         self.assertIn(SESSION_KEY, self.client.session)
 
-    #異常系test
+    # 異常系test
+    # form empty test
+    def test_failure_post_with_empty_form(self):
+        invalid_data = {
+            "username": "",
+            "email": "",
+            "password1": "",
+            "password2": "",
+        }
+        response = self.client.post(self.url, invalid_data)
+        form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
+        self.assertFalse(form.is_valid())
+        self.assertIn("このフィールドは必須です。", form.errors["username"])
+        self.assertIn("このフィールドは必須です。", form.errors["email"])
+        self.assertIn("このフィールドは必須です。", form.errors["password1"])
+        self.assertIn("このフィールドは必須です。", form.errors["password2"])
+
+    # username empty test
     def test_failure_post_with_empty_username(self):
+        print(self.url)
         invalid_data = {
             "username": "",
             "email": "test@test.com",
@@ -46,16 +66,55 @@ class TestSignupView(TestCase):
             "password2": "testpassword",
         }
         response = self.client.post(self.url, invalid_data)
+        print(response.context)
+        form = response.context["form"]
+        print(form.errors)
+
+        # don't redirect
+        self.assertEqual(response.status_code, 200)
+        # exist error
+        self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
+        # よくわからん
+        self.assertFalse(form.is_valid())
+        # Error message
+        self.assertIn("このフィールドは必須です。", form.errors["username"])
+
+    # email empty test
+    def test_failure_post_with_empty_email(self):
+        invalid_data = {
+            "username": "testuser",
+            "email": "",
+            "password1": "testpassword",
+            "password2": "testpassword",
+        }
+        response = self.client.post(self.url, invalid_data)
         form = response.context["form"]
 
-        #don't redirect
         self.assertEqual(response.status_code, 200)
-        #exist error
         self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
-        #よくわからん
         self.assertFalse(form.is_valid())
-        #Error message
-        self.assertIn("このフィールドは必須です。", form.errors["username"])    
+        self.assertIn("このフィールドは必須です。", form.errors["email"])
+
+    #   password empty test
+    def test_failure_post_with_empty_password(self):
+        invalid_data = {
+            "username": "testuser",
+            "email": "test@test.com",
+            "password1": "",
+            "password2": "",
+        }
+        response = self.client.post(self.url, invalid_data)
+        form = response.context["form"]
+
+        self.assertEqual(response.status_code, 200)
+        # exist error
+        self.assertFalse(User.objects.filter(username=invalid_data["username"]).exists())
+        # よくわからん
+        self.assertFalse(form.is_valid())
+        # Error message
+        self.assertIn("このフィールドは必須です。", form.errors["password1"])
+        self.assertIn("このフィールドは必須です。", form.errors["password2"])
+
 
 # class TestSignupView(TestCase):
 #     def test_success_get(self):
