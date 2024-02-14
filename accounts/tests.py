@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth import SESSION_KEY, authenticate, get_user_model
+from django.contrib.auth import SESSION_KEY, get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
@@ -29,8 +29,8 @@ class TestSignupView(TestCase):
         print(response)
         self.assertRedirects(
             response,
-            #reverse("tweets:home"), # 1-2
-            reverse(settings.LOGIN_REDIRECT_URL), # 2-1
+            # reverse("tweets:home"), # 1-2
+            reverse(settings.LOGIN_REDIRECT_URL),  # 2-1
             status_code=302,
             target_status_code=200,
         )
@@ -215,7 +215,7 @@ class TestLoginView(TestCase):
             email="test@example.com",
             password="testpassword",
         )
-    
+
     # Test Case 2-2
     def test_success_get(self):
         response = self.client.get(self.url)
@@ -250,8 +250,11 @@ class TestLoginView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(form.is_valid())
         self.assertNotIn(SESSION_KEY, self.client.session)
-        self.assertIn("正しいユーザー名とパスワードを入力してください。どちらのフィールドも大文字と小文字は区別されます。", form.errors["__all__"])
-    
+        self.assertIn(
+            "正しいユーザー名とパスワードを入力してください。どちらのフィールドも大文字と小文字は区別されます。",
+            form.errors["__all__"],
+        )
+
     # Test Case 2-5
     def test_failure_post_with_empty_password(self):
         invalid_data = {
@@ -269,8 +272,8 @@ class TestLoginView(TestCase):
 
 class TestLogoutView(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='testpassword')
-        self.client.login(username='testuser', password='testpassword')
+        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.client.login(username="testuser", password="testpassword")
 
     # Test Case 2-6
     def test_success_post(self):
@@ -279,7 +282,7 @@ class TestLogoutView(TestCase):
         print(response)
         self.assertRedirects(
             response,
-            reverse(settings.LOGOUT_REDIRECT_URL), 
+            reverse(settings.LOGOUT_REDIRECT_URL),
             status_code=302,
             target_status_code=200,
         )
