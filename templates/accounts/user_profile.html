@@ -1,0 +1,8 @@
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+<p style="text-align: center;">Welcome , {{ user.get_username }} !!</p>
+<li><a href="{% url 'accounts:logout' %}">ログアウト</a></li>
+{% endblock %}
