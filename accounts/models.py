@@ -9,7 +9,6 @@ class User(AbstractUser):
         swappable = "AUTH_USER_MODEL"
 
 
-
 # from django.contrib.auth.models import AbstractUser
 # from django.db import models
 
