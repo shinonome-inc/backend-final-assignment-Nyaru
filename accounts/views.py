@@ -33,7 +33,6 @@ class UserProfileView(TemplateView, LoginRequiredMixin):
         # 親クラスのget_context_dataを呼び出して基本的なコンテキストデータを取得
         context = super().get_context_data(**kwargs)
         context["tweets"] = Tweet.objects.filter(creator__username=self.kwargs["username"])
-        # context['tweets'] = Tweet.objects.filter(creator__username="a")
         return context
 
 

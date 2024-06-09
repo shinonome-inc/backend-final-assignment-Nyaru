@@ -28,3 +28,13 @@ class TweetCreateView(CreateView):
     def form_valid(self, form):
         form.instance.creator = self.request.user  # ログイン中のユーザーを設定
         return super().form_valid(form)
+
+
+class TweetDetailView(TemplateView):
+    template_name = "tweets/detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tweet"] = Tweet.objects.get(pk=self.kwargs["pk"])
+        return context
+    
