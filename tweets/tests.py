@@ -17,8 +17,8 @@ class TestHomeView(TestCase):
         self.assertTemplateUsed(response, "tweets/home.html")
 
 
-# class TestTweetCreateView(TestCase):
-#     def test_success_get(self):
+class TestTweetCreateView(TestCase):
+     def test_success_get(self):
 
 #     def test_success_post(self):
 

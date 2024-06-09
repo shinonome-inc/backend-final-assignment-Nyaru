@@ -5,5 +5,15 @@
 
 {% block content %}
 <h1>Homeです</h1>
+<h1>Tweet List</h1>
+    <ul>
+        {% for tweet in tweets %}
+            <li>
+                <p>{{ tweet.body }}</p>
+                <p>Created by: {{ tweet.creator.username }}</p>
+                <p>Created at: {{ tweet.created }}</p>
+            </li>
+        {% endfor %}
+    </ul>
 {% include '../accounts/user_profile.html' %}
 {% endblock %}
