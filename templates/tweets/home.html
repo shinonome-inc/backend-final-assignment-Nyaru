@@ -15,5 +15,6 @@
             </li>
         {% endfor %}
     </ul>
-{% include '../accounts/user_profile.html' %}
+<li><a href="{% url 'accounts:user_profile' user.get_username %}">Sign up</a></li>
+{% comment %} {% include '../accounts/user_profile.html' %} {% endcomment %}
 {% endblock %}

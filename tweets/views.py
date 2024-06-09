@@ -15,13 +15,8 @@ class HomeView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         # 親クラスのget_context_dataを呼び出して基本的なコンテキストデータを取得
         context = super().get_context_data(**kwargs)
-        context['tweets'] = self.get_data()
+        context['tweets'] = Tweet.objects.all()
         return context
-
-    def get_data(self):
-        # Tweetモデルからすべてのツイートを取得
-        tweets = Tweet.objects.all()
-        return tweets
     
 
 class TweetCreateView(CreateView):

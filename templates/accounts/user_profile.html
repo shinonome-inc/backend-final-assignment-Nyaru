@@ -1,8 +1,18 @@
+{% extends "base.html" %}
 
 {% block title %}Profile{% endblock %}
 
 {% block content %}
 
 <p style="text-align: center;">Welcome , {{ user.get_username }} !!</p>
+<h1>Your Tweet List</h1>
+    <ul>
+        {% for tweet in tweets %}
+            <li>
+                <p>{{ tweet.body }}</p>
+                <p>Created by: {{ tweet.creator.username }}</p>
+                <p>Created at: {{ tweet.created }}</p>
+            </li>
+        {% endfor %}
 <li><a href="{% url 'accounts:logout' %}">ログアウト</a></li>
 {% endblock %}
