@@ -15,7 +15,8 @@
             </li>
         {% endfor %}
     </ul>
-    <li><a href="{% url 'tweets:create' %}">Create</a></li>
+    <li><a href="{% url 'tweets:create' %}">Tweets Create</a></li>
+    <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
 {% comment %} <li><a href="{% url 'accounts:user_profile' user.get_username %}">Sign up</a></li> {% endcomment %}
 {% comment %} {% include '../accounts/user_profile.html' %} {% endcomment %}
 {% endblock %}
