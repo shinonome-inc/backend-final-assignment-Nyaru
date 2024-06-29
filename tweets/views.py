@@ -1,7 +1,5 @@
-# from django.shortcuts import render
-from django import forms
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, TemplateView
 
@@ -40,7 +38,16 @@ class TweetDetailView(TemplateView):
         return context
 
 
-class TweetDeleteView(DeleteView):
+class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Tweet
     template_name = "tweets/delete.html"
     success_url = reverse_lazy("tweets:home")
+
+    def test_func(self):
+        tweet = self.get_object()
+        return self.request.user == tweet.creator
+
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return HttpResponseForbidden("ツイートを削除する権限がありませんわ！")
+        return super().handle_no_permission()
