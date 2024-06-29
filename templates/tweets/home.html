@@ -10,7 +10,7 @@
         {% for tweet in tweets %}
             <li>
                 <p><a href="{% url 'tweets:detail' tweet.id %}">{{ tweet.body }}</a></p>
-                <p>Created by: {{ tweet.creator.username }}</p>
+                <p>Created by: <a href ="{% url 'accounts:user_profile' username=tweet.creator%}">{{ tweet.creator.username }}</a></p>
                 <p>Created at: {{ tweet.created }}</p>
             </li>
         {% endfor %}

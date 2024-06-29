@@ -4,9 +4,15 @@
 
 {% block content %}
 
-<p style="text-align: center;">Welcome , {{ user.get_username }} !!</p>
-<h1>Your Tweet List</h1>
-    <ul>
+<h1>{{ user.username }}'s Page</h1>
+{% if  check%}
+<btn><a href="{% url 'accounts:unfollow' user.username%}">UnFollow</a></btn>
+{% else %}
+<a href="{% url 'accounts:follow' user.username%}">Follow</a>
+{% endif %}
+<h2><a href="{% url 'accounts:following_list' user.username %}">Follow<br>{{follow}}</a></h2>
+<h2><a href="{% url 'accounts:follower_list' user.username %}">Follower<br>{{follower}}</a></h2>
+<ul>
         {% for tweet in tweets %}
             <li>
                 <p><a href="{% url 'tweets:detail' tweet.id %}">{{ tweet.body }}</a></p>

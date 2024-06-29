@@ -16,14 +16,6 @@ class Person(models.Model):
     last_name = models.CharField(max_length=30)
 
 
-# 引数にblank=Falseを入れる必要はない。
-# なぜならデフォルトでblank=Falseとなるため。
-
-# from django.contrib.auth.models import AbstractUser
-# from django.db import models
-
-
-# class User(AbstractUser):
-
-
-# class FriendShip(models.Model):
+class FriendShip(models.Model):
+    follow = models.ForeignKey(User, related_name="follower", on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, related_name="follow", on_delete=models.CASCADE)
