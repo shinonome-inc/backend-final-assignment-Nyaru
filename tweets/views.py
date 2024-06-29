@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, DeleteView, TemplateView
 
 from .forms import TweetCreateForm
 from .models import Tweet
@@ -31,6 +31,7 @@ class TweetCreateView(CreateView):
 
 
 class TweetDetailView(TemplateView):
+    model = Tweet
     template_name = "tweets/detail.html"
 
     def get_context_data(self, **kwargs):
@@ -38,3 +39,14 @@ class TweetDetailView(TemplateView):
         context["tweet"] = Tweet.objects.get(pk=self.kwargs["pk"])
         return context
     
+
+class TweetDeleteView(DeleteView):
+    model = Tweet
+    template_name = "tweets/delete.html"
+    success_url = reverse_lazy("tweets:home")
+
+    
+
+    
+    
+        
