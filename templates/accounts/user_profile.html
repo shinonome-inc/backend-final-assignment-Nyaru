@@ -14,5 +14,7 @@
                 <p>Created at: {{ tweet.created }}</p>
             </li>
         {% endfor %}
+    </ul>
+    <li><a href="{% url 'tweets:create' %}">Create</a></li><li><a href="{% url 'tweets:create' %}">Create</a></li>
 <li><a href="{% url 'accounts:logout' %}">ログアウト</a></li>
 {% endblock %}
