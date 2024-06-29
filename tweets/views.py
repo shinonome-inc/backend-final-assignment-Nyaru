@@ -11,13 +11,13 @@ from .models import Tweet
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "tweets/home.html"
-    
+
     def get_context_data(self, **kwargs):
         # 親クラスのget_context_dataを呼び出して基本的なコンテキストデータを取得
         context = super().get_context_data(**kwargs)
-        context['tweets'] = Tweet.objects.all()
+        context["tweets"] = Tweet.objects.all()
         return context
-    
+
 
 class TweetCreateView(CreateView):
     model = Tweet
@@ -38,15 +38,9 @@ class TweetDetailView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["tweet"] = Tweet.objects.get(pk=self.kwargs["pk"])
         return context
-    
+
 
 class TweetDeleteView(DeleteView):
     model = Tweet
     template_name = "tweets/delete.html"
     success_url = reverse_lazy("tweets:home")
-
-    
-
-    
-    
-        
