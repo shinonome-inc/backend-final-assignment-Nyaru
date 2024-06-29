@@ -6,36 +6,36 @@ from django.urls import reverse
 User = get_user_model()
 
 
-# class TestSignupView(TestCase):
-#     def setUp(self):
-#         self.url = reverse("accounts:signup")
-#         self.user = User.objects.create_user(username="tester", password="testpassword")
+class TestSignupView(TestCase):
+    def setUp(self):
+        self.url = reverse("accounts:signup")
+        self.user = User.objects.create_user(username="tester", password="testpassword")
 
-#     # Test Case 1
-#     def test_success_get(self):
-#         response = self.client.get(self.url)
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, "accounts/signup.html")
+    #     # Test Case 1
+    #     def test_success_get(self):
+    #         response = self.client.get(self.url)
+    #         self.assertEqual(response.status_code, 200)
+    #         self.assertTemplateUsed(response, "accounts/signup.html")
 
-#     # Test Case 1-2,2-1
-#     def test_success_post(self):
-#         valid_data = {
-#             "username": "testuser",
-#             "email": "test@test.com",
-#             "password1": "testpassword",
-#             "password2": "testpassword",
-#         }
-#         response = self.client.post(self.url, valid_data)
-#         print(response)
-#         self.assertRedirects(
-#             response,
-#             # reverse("tweets:home"), # 1-2
-#             reverse(settings.LOGIN_REDIRECT_URL),  # 2-1
-#             status_code=302,
-#             target_status_code=200,
-#         )
-#         self.assertTrue(User.objects.filter(username=valid_data["username"]).exists())
-#         self.assertIn(SESSION_KEY, self.client.session)
+    # Test Case 1-2,2-1
+    def test_success_post(self):
+        valid_data = {
+            "username": "testuser",
+            "email": "test@test.com",
+            "password1": "testpassword",
+            "password2": "testpassword",
+        }
+        response = self.client.post(self.url, valid_data)
+        self.assertRedirects(
+            response,
+            # reverse("tweets:home"), # 1-2
+            reverse(settings.LOGIN_REDIRECT_URL),  # 2-1
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertTrue(User.objects.filter(username=valid_data["username"]).exists())
+        self.assertIn(SESSION_KEY, self.client.session)
+
 
 #     # 異常系test
 #     # Test Case 3
@@ -279,7 +279,6 @@ class TestLogoutView(TestCase):
     def test_success_post(self):
         self.url = reverse("accounts:logout")
         response = self.client.post(self.url)
-        print(response)
         self.assertRedirects(
             response,
             reverse(settings.LOGOUT_REDIRECT_URL),
