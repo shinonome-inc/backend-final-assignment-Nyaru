@@ -307,7 +307,7 @@ class TestUserProfileView(TestCase):
     def test_success_get(self):
         url = reverse("accounts:user_profile", kwargs={"username": self.user.username})
         response = self.client.get(url)
-        tweet_context = response.context["tweets"]
+        tweet_context = response.context["object_list"]
         true_context = Model.objects.filter(creator__username=self.user)
         self.assertQuerysetEqual(tweet_context, true_context, ordered=False)
 

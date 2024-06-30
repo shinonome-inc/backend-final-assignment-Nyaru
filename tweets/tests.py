@@ -18,7 +18,7 @@ class TestHomeView(TestCase):
         response = self.client.get(reverse("tweets:home"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "tweets/home.html")
-        tweet_context = response.context["tweets"]
+        tweet_context = response.context["object_list"]
         true_context = Model.objects.all()
         self.assertQuerysetEqual(tweet_context, true_context, ordered=False)
 
