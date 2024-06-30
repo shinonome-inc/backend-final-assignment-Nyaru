@@ -7,7 +7,7 @@
 <p style="text-align: center;">Welcome , {{ user.get_username }} !!</p>
 <h1>Your Tweet List</h1>
     <ul>
-        {% for tweet in tweets %}
+        {% for tweet in object_list %}
             <li>
                 <p><a href="{% url 'tweets:detail' tweet.id %}">{{ tweet.body }}</a></p>
                 <p>Created by: {{ tweet.creator.username }}</p>

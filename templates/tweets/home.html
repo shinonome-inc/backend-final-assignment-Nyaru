@@ -7,16 +7,14 @@
 <h1>Homeです</h1>
 <h1>Tweet List</h1>
     <ul>
-        {% for tweet in tweets %}
+        {% for tweet in object_list %}
             <li>
                 <p><a href="{% url 'tweets:detail' tweet.id %}">{{ tweet.body }}</a></p>
-                <p>Created by: {{ tweet.creator.username }}</p>
+                <p>Creator <a href = "{% url 'accounts:user_profile' tweet.creator.username%}"> {{ tweet.creator.username }}</a></p>
                 <p>Created at: {{ tweet.created }}</p>
             </li>
         {% endfor %}
     </ul>
     <li><a href="{% url 'tweets:create' %}">Tweets Create</a></li>
     <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
-{% comment %} <li><a href="{% url 'accounts:user_profile' user.get_username %}">Sign up</a></li> {% endcomment %}
-{% comment %} {% include '../accounts/user_profile.html' %} {% endcomment %}
 {% endblock %}
