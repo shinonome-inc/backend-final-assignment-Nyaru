@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, TemplateView, View
+from django.views.generic import CreateView, ListView, View
 
 from tweets.models import Tweet
 
@@ -27,21 +27,15 @@ class SignupView(CreateView):
         return response
 
 
-class UserProfileView(TemplateView, LoginRequiredMixin):
-
+class UserProfileView(ListView, LoginRequiredMixin):
     template_name = "accounts/user_profile.html"
+    model = Tweet
 
-    # 継承元のget_context_dataをオーバーライド（要勉強）
-    def get_context_data(self, **kwargs):
-        # 親クラスのget_context_dataを呼び出して基本的なコンテキストデータを取得
-        context = super().get_context_data(**kwargs)
-        user = get_object_or_404(User, username=self.kwargs["username"])
-        context["user"] = user
-        context["tweets"] = Tweet.objects.filter(creator__username=user.username)
-        context["follow"] = FriendShip.objects.filter(follow=user.id).count()
-        context["follower"] = FriendShip.objects.filter(follower=user.id).count()
-        context["check"] = FriendShip.objects.filter(follow=self.request.user, follower=user.id).exists()
-        return context
+    def get_queryset(self, **kwargs):
+        queryset = super().get_queryset(**kwargs)  # Article.objects.all() と同じ結果
+        queryset = queryset.filter(creator__username=self.kwargs["username"])
+        queryset = queryset.order_by("-created")
+        return queryset
 
 
 # CreateViewはTempleteViewを継承しているのでTempleteが必要。

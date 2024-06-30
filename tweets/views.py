@@ -1,20 +1,15 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseForbidden
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, TemplateView
+from django.views.generic import CreateView, DeleteView, ListView, TemplateView
 
 from .forms import TweetCreateForm
 from .models import Tweet
 
 
-class HomeView(LoginRequiredMixin, TemplateView):
+class HomeView(LoginRequiredMixin, ListView):
     template_name = "tweets/home.html"
-
-    def get_context_data(self, **kwargs):
-        # 親クラスのget_context_dataを呼び出して基本的なコンテキストデータを取得
-        context = super().get_context_data(**kwargs)
-        context["tweets"] = Tweet.objects.all()
-        return context
+    model = Tweet
 
 
 class TweetCreateView(CreateView):

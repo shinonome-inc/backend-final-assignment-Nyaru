@@ -316,8 +316,8 @@ class TestUserProfileView(TestCase):
     def test_success_get(self):
         url = reverse("accounts:user_profile", kwargs={"username": self.user.username})
         response = self.client.get(url)
-        tweet_context = response.context["tweets"]
-        true_context = Tweet.objects.filter(creator__username=self.user)
+        tweet_context = response.context["object_list"]
+        true_context = Model.objects.filter(creator__username=self.user)
         self.assertQuerysetEqual(tweet_context, true_context, ordered=False)
         self.assertEqual(response.context["follow"], FriendShip.objects.filter(follow=self.user.id).count())
         self.assertEqual(response.context["follower"], FriendShip.objects.filter(follower=self.user.id).count())
