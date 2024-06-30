@@ -1,8 +1,7 @@
-from django import forms
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, TemplateView, View
@@ -42,7 +41,6 @@ class UserProfileView(TemplateView, LoginRequiredMixin):
         context["follow"] = FriendShip.objects.filter(follow=user.id).count()
         context["follower"] = FriendShip.objects.filter(follower=user.id).count()
         context["check"] = FriendShip.objects.filter(follow=self.request.user, follower=user.id).exists()
-        print(context)
         return context
 
 
@@ -52,14 +50,15 @@ class FollowView(LoginRequiredMixin, View):
         user_to_follow = get_object_or_404(User, username=username)
 
         if user_to_follow == request.user:
-            return HttpResponseRedirect(reverse_lazy("tweets:home"))
+            response = HttpResponse(status=400)
+            return response
 
         if FriendShip.objects.filter(follow=request.user, follower=user_to_follow).exists():
             None
         else:
             FriendShip.objects.create(follow=request.user, follower=user_to_follow)
 
-        return HttpResponseRedirect(reverse_lazy("tweets:home"))
+        return HttpResponseRedirect(reverse_lazy("accounts:user_profile", kwargs={"username": username}))
 
 
 class UnFollowView(LoginRequiredMixin, View):
@@ -67,12 +66,15 @@ class UnFollowView(LoginRequiredMixin, View):
         user_to_follow = get_object_or_404(User, username=username)
 
         if user_to_follow == request.user:
-            return HttpResponseRedirect(reverse_lazy("tweets:home"))
+            response = HttpResponse(status=400)
+            return response
 
         if FriendShip.objects.filter(follow=request.user, follower=user_to_follow).exists():
             FriendShip.objects.filter(follow=request.user, follower=user_to_follow).delete()
+        else:
+            None
 
-        return HttpResponseRedirect(reverse_lazy("tweets:home"))
+        return HttpResponseRedirect(reverse_lazy("accounts:user_profile", kwargs={"username": username}))
 
 
 class FollowingListView(TemplateView, LoginRequiredMixin):
