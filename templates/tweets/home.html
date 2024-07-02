@@ -1,9 +1,9 @@
-{% extends "base.html" %} ← base.htmlを継承
+{% extends "base.html" %} 
 
-{% block title %}Home{% endblock %} ← titleを入れる
+{% block title %}Home{% endblock %} 
 
 
 {% block content %}
 <h1>Homeです</h1>
-{% include '../accounts/user_profile.html' %}
+<a href ="{% url 'accounts:user_profile' user.get_username  %}">Profile</a>
 {% endblock %}

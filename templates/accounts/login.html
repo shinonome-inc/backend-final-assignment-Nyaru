@@ -1,12 +1,12 @@
-{% extends "base.html" %} ← base.htmlを継承
+{% extends "base.html" %}
 
-{% block title %}Login{% endblock %} ← titleを入れる
+{% block title %}Login{% endblock %} 
 
 {% block content %}
 <form method="post" class="text-center">
 	{{ form.as_p }}
-	{% csrf_token %} <!-- ← csrf_token必須。formタグ内であればどこに書いてもOK -->
-    <button type="submit" class="btn btn-outline-primary">ログイン</button>
+	{% csrf_token %}
+	  <button type="submit" class="btn btn-outline-primary">ログイン</button>
 
 </form>
 {% endblock %}

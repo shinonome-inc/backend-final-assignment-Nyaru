@@ -9,7 +9,6 @@ User = get_user_model()
 class TestSignupView(TestCase):
     def setUp(self):
         self.url = reverse("accounts:signup")
-        self.user = User.objects.create_user(username="tester", password="testpassword")
 
     #     # Test Case 1
     #     def test_success_get(self):
@@ -28,7 +27,6 @@ class TestSignupView(TestCase):
         response = self.client.post(self.url, valid_data)
         self.assertRedirects(
             response,
-            # reverse("tweets:home"), # 1-2
             reverse(settings.LOGIN_REDIRECT_URL),  # 2-1
             status_code=302,
             target_status_code=200,
@@ -209,7 +207,7 @@ class TestSignupView(TestCase):
 
 class TestLoginView(TestCase):
     def setUp(self):
-        self.url = reverse("accounts:login")
+        self.url = reverse("LOGIN_URL")
         self.user = User.objects.create_user(
             username="testuser",
             email="test@example.com",
