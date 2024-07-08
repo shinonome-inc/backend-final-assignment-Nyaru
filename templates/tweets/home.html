@@ -1,10 +1,9 @@
-{% extends "base.html" %} ← base.htmlを継承
+{% extends "base.html" %} 
 
-{% block title %}Home{% endblock %} ← titleを入れる
+{% block title %}Home{% endblock %} 
 
 
 {% block content %}
-<h1>Homeです</h1>
 <h1>Tweet List</h1>
     <ul>
         {% for tweet in object_list %}
@@ -16,5 +15,4 @@
         {% endfor %}
     </ul>
     <li><a href="{% url 'tweets:create' %}">Tweets Create</a></li>
-    <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
 {% endblock %}

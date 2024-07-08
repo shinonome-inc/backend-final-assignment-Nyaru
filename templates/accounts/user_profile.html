@@ -1,11 +1,11 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}Profile{% endblock %}
 
 {% block content %}
 
 <p style="text-align: center;">Welcome , {{ user.get_username }} !!</p>
-<h1>Your Tweet List</h1>
+<h1>Tweet List</h1>
     <ul>
         {% for tweet in object_list %}
             <li>

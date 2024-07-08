@@ -11,8 +11,16 @@
     <nav>
       <ul>
 				<li><a href="{% url 'welcome:welcome' %}">Twitter Clone</a></li>
-        <li><a href="{% url 'accounts:signup' %}">Sign up</a></li>
-        <li><a href="{% url 'accounts:login' %}">Login</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'accounts:login' %}">Login</a></li>
+          <li><a href="{% url 'accounts:signup' %}">Sign up</a></li>
+        {% endif %}
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'tweets:home' %}">Home</a></li>
+          <li><a href="{% url 'accounts:user_profile' user.get_username %}">My Profile</a></li>
+        {% endif %}
       </ul>
     </nav>
   </header>
