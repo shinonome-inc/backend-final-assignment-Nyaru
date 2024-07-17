@@ -22,6 +22,7 @@ class TestHomeView(TestCase):
         true_context = Model.objects.all()
         self.assertQuerysetEqual(tweet_context, true_context, ordered=False)
 
+
 class TestTweetCreateView(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="tester", password="testpassword")
