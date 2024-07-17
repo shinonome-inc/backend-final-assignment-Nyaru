@@ -576,10 +576,6 @@ class TestUserProfileView(TestCase):
         self.user = User.objects.create_user(username="tester", password="testpassword")
         self.client.login(username="tester", password="testpassword")
         self.tweet = Model.objects.create(body="test", creator=self.user)
-        self.client.logout()
-        self.user2 = User.objects.create_user(username="tester2", password="testpassword")
-        self.client.login(username="tester2", password="testpassword")
-        self.tweet = Model.objects.create(body="test2", creator=self.user2)
 
     # Case 3-2
     def test_success_get(self):
