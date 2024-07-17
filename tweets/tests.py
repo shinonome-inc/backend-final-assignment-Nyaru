@@ -22,11 +22,11 @@ class TestHomeView(TestCase):
         true_context = Model.objects.all()
         self.assertQuerysetEqual(tweet_context, true_context, ordered=False)
 
-
 class TestTweetCreateView(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="tester", password="testpassword")
         self.client.login(username="tester", password="testpassword")
+        self.base_records = Model.objects.all()
         self.count = Model.objects.count()
 
     # Case 3-3
@@ -48,6 +48,7 @@ class TestTweetCreateView(TestCase):
             target_status_code=200,
         )
         self.assertEqual(Model.objects.count(), self.count + 1)
+        self.assertEqual(Model.objects.last().body, data["body"])
 
     # Case 3-5
     def test_failure_post_with_empty_content(self):
@@ -58,7 +59,7 @@ class TestTweetCreateView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "tweets/create.html")
         self.assertEqual(response.context["form"].errors, {"body": ["ツイート内容がありませんわ～！"]})
-        self.assertEqual(Model.objects.count(), self.count)
+        self.assertQuerySetEqual(Model.objects.all(), self.base_records)
 
     # Case 3-6
     def test_failure_post_with_too_long_content(self):
@@ -69,7 +70,7 @@ class TestTweetCreateView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "tweets/create.html")
         self.assertEqual(response.context["form"].errors, {"body": ["ツイートが140字を超えていますわ～！"]})
-        self.assertEqual(Model.objects.count(), self.count)
+        self.assertQuerySetEqual(Model.objects.all(), self.base_records)
 
 
 class TestTweetDetailView(TestCase):
@@ -93,6 +94,7 @@ class TestTweetDeleteView(TestCase):
         self.tweet1 = Model.objects.create(body="test content", creator=self.user)
         self.tweet2 = Model.objects.create(body="test content2", creator=self.user)
         self.count = Model.objects.count()
+        self.base_records = Model.objects.all()
 
     def test_success_post(self):
         response = self.client.post(reverse("tweets:delete", kwargs={"pk": self.tweet1.pk}))
@@ -102,19 +104,19 @@ class TestTweetDeleteView(TestCase):
             status_code=302,
             target_status_code=200,
         )
-        self.assertEqual(Model.objects.count(), self.count - 1)
+        self.assertQuerysetEqual(Model.objects.all(), self.base_records.exclude(pk=self.tweet1.pk))
 
     def test_failure_post_with_not_exist_tweet(self):
         response = self.client.post(reverse("tweets:delete", kwargs={"pk": 100}))
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(Model.objects.count(), self.count)
+        self.assertQuerySetEqual(Model.objects.all(), self.base_records, ordered=False)
 
     def test_failure_post_with_incorrect_user(self):
         User.objects.create_user(username="tester2", password="testpassword")
         self.client.login(username="tester2", password="testpassword")
         response = self.client.post(reverse("tweets:delete", kwargs={"pk": self.tweet1.pk}))
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(Model.objects.count(), self.count)
+        self.assertQuerySetEqual(Model.objects.all(), self.base_records, ordered=False)
 
 
 # class TestLikeView(TestCase):
