@@ -19,6 +19,7 @@
         {% endif %}
         {% if user.is_authenticated %}
           <li><a href="{% url 'tweets:home' %}">Home</a></li>
+          <li><a href="{% url 'tweets:create' %}">Create Tweet</a></li>
           <li><a href="{% url 'accounts:user_profile' user.get_username %}">My Profile</a></li>
         {% endif %}
       </ul>
