@@ -12,7 +12,7 @@ class HomeView(LoginRequiredMixin, ListView):
     model = Tweet
 
 
-class TweetCreateView(CreateView):
+class TweetCreateView(CreateView, LoginRequiredMixin):
     model = Tweet
     form_class = TweetCreateForm
     template_name = "tweets/create.html"
@@ -23,7 +23,7 @@ class TweetCreateView(CreateView):
         return super().form_valid(form)
 
 
-class TweetDetailView(TemplateView):
+class TweetDetailView(TemplateView, LoginRequiredMixin):
     model = Tweet
     template_name = "tweets/detail.html"
 
