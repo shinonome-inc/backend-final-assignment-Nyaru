@@ -28,10 +28,10 @@ class UserProfileView(ListView, LoginRequiredMixin):
     model = Tweet
 
     def get_queryset(self, **kwargs):
-        queryset = super().get_queryset(**kwargs)  # Article.objects.all() と同じ結果
-        queryset = queryset.filter(creator__username=self.kwargs["username"])
-        queryset = queryset.order_by("-created")
-        return queryset
+        records = super().get_queryset(**kwargs)  # Article.objects.all() と同じ結果
+        records = records.filter(creator__username=self.kwargs["username"])
+        records = records.order_by("-created")
+        return records
 
     # # 継承元のget_context_dataをオーバーライド（要勉強）
     # def get_context_data(self, **kwargs):
