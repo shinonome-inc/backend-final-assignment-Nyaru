@@ -1,17 +1,19 @@
-{% extends "base.html" %} 
+{% extends 'base.html' %}
 
-{% block title %}Home{% endblock %} 
-
+{% block title %}Profile{% endblock %}
 
 {% block content %}
+
+<p style="text-align: center;">Welcome , {{ user.get_username }} !!</p>
 <h1>Tweet List</h1>
     <ul>
         {% for tweet in object_list %}
             <li>
                 <p><a href="{% url 'tweets:detail' tweet.id %}">{{ tweet.body }}</a></p>
-                <p>Creator <a href = "{% url 'accounts:user_profile' tweet.creator.username%}"> {{ tweet.creator.username }}</a></p>
+                <p>Created by: {{ tweet.creator.username }}</p>
                 <p>Created at: {{ tweet.created }}</p>
             </li>
         {% endfor %}
     </ul>
+
 {% endblock %}

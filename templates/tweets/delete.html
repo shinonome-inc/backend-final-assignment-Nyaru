@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Tweet deleted!{% endblock %}
+
+{% block content %}
+<h1>削除内容の確認</h1>
+<h1>Tweet</h1>
+    <ul>
+            <li>
+            <p>{{ tweet.body }}</a></p>
+            <p>Created by: {{ tweet.creator.username }}</p>
+            <p>Created at: {{ tweet.created }}</p>
+            </li>
+            <form method="post">
+            {% csrf_token %}
+                <p>削除します。よろしいですか？</p>
+                <input class="btn btn-danger" type="submit" value="削除する">
+            </form>
+    </ul>
+    <a href="{% url 'tweets:home' %}">Home</a>
+{% endblock %}

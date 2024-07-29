@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Tweet datail{% endblock %}
+
+{% block content %}
+<h1>detail</h1>
+<h1>Tweet</h1>
+    <ul>
+            <li>
+            <p>{{ tweet.body }}</a></p>
+            <p>Created by: {{ tweet.creator.username }}</p>
+            <p>Created at: {{ tweet.created }}</p>
+            </li>
+            <li><a href="{% url 'tweets:delete' tweet.id %}">Delete</a></li>
+    </ul>
+    <a href="{% url 'tweets:home' %}">Home</a>
+{% endblock %}
