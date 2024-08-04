@@ -4,8 +4,6 @@ from django.db import models
 
 class User(AbstractUser):
     email = models.EmailField()
-    # https://github.com/django/django/blob/main/django/contrib/auth/models.py#L405より。
-    # ここでAUTH_USER_MODELに返すよ！って設定している。
 
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"

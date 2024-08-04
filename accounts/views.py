@@ -20,7 +20,6 @@ class SignupView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         username = form.cleaned_data["username"]
-        # パスワード入力確認処理をしているため
         password = form.cleaned_data["password1"]
         user = authenticate(self.request, username=username, password=password)
         login(self.request, user)
@@ -32,10 +31,10 @@ class UserProfileView(ListView, LoginRequiredMixin):
     model = Tweet
 
     def get_queryset(self, **kwargs):
-        queryset = super().get_queryset(**kwargs)  # Article.objects.all() と同じ結果
-        queryset = queryset.filter(creator__username=self.kwargs["username"])
-        queryset = queryset.order_by("-created")
-        return queryset
+        records = super().get_queryset(**kwargs)  # Article.objects.all() と同じ結果
+        records = records.filter(creator__username=self.kwargs["username"])
+        records = records.order_by("-created")
+        return records
 
 
 # CreateViewはTempleteViewを継承しているのでTempleteが必要。

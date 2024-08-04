@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}Profile{% endblock %}
 
@@ -13,7 +13,7 @@
 <h2><a href="{% url 'accounts:following_list' user.username %}">Follow<br>{{follow}}</a></h2>
 <h2><a href="{% url 'accounts:follower_list' user.username %}">Follower<br>{{follower}}</a></h2>
 <p style="text-align: center;">Welcome , {{ user.get_username }} !!</p>
-<h1>Your Tweet List</h1>
+<h1>Tweet List</h1>
     <ul>
         {% for tweet in object_list %}
             <li>
@@ -23,6 +23,5 @@
             </li>
         {% endfor %}
     </ul>
-    <li><a href="{% url 'tweets:create' %}">Create</a></li><li><a href="{% url 'tweets:create' %}">Create</a></li>
-<li><a href="{% url 'accounts:logout' %}">ログアウト</a></li>
+
 {% endblock %}
