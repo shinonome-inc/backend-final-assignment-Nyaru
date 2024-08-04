@@ -13,14 +13,14 @@ Model = Tweet
 #         self.user = User.objects.create_user(username="tester", password="testpassword")
 #         self.client.login(username="tester", password="testpassword")
 
-    # # Case 1-2(response) 3-1(model_data)
-    # def test_success_get(self):
-    #     response = self.client.get(reverse("tweets:home"))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, "tweets/home.html")
-    #     tweet_context = response.context["object_list"]
-    #     true_context = Model.objects.all()
-    #     self.assertQuerysetEqual(tweet_context, true_context, ordered=False)
+# # Case 1-2(response) 3-1(model_data)
+# def test_success_get(self):
+#     response = self.client.get(reverse("tweets:home"))
+#     self.assertEqual(response.status_code, 200)
+#     self.assertTemplateUsed(response, "tweets/home.html")
+#     tweet_context = response.context["object_list"]
+#     true_context = Model.objects.all()
+#     self.assertQuerysetEqual(tweet_context, true_context, ordered=False)
 
 
 class TestTweetCreateView(TestCase):
