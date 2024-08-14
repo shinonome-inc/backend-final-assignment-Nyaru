@@ -10,35 +10,36 @@ from tweets.models import Tweet
 
 
 User = get_user_model()
+Model = Tweet
+Model2 = FriendShip
 
+# class TestSignupView(TestCase):
+#     def setUp(self):
+#         self.url = reverse("accounts:signup")
 
-class TestSignupView(TestCase):
-    def setUp(self):
-        self.url = reverse("accounts:signup")
+#     # Test Case 1
+#     def test_success_get(self):
+#         response = self.client.get(self.url)
+#         self.assertEqual(response.status_code, 200)
+#         self.assertTemplateUsed(response, "accounts/signup.html")
 
-    #     # Test Case 1
-    #     def test_success_get(self):
-    #         response = self.client.get(self.url)
-    #         self.assertEqual(response.status_code, 200)
-    #         self.assertTemplateUsed(response, "accounts/signup.html")
-
-    # Test Case 1-2,2-1
-    # def test_success_post(self):
-    #     valid_data = {
-    #         "username": "testuser",
-    #         "email": "test@test.com",
-    #         "password1": "testpassword",
-    #         "password2": "testpassword",
-    #     }
-    #     response = self.client.post(self.url, valid_data)
-    #     self.assertRedirects(
-    #         response,
-    #         reverse(settings.LOGIN_REDIRECT_URL),  # 2-1
-    #         status_code=302,
-    #         target_status_code=200,
-    #     )
-    #     self.assertTrue(User.objects.filter(username=valid_data["username"]).exists())
-    #     self.assertIn(SESSION_KEY, self.client.session)
+# Test Case 1-2,2-1
+# def test_success_post(self):
+#     valid_data = {
+#         "username": "testuser",
+#         "email": "test@test.com",
+#         "password1": "testpassword",
+#         "password2": "testpassword",
+#     }
+#     response = self.client.post(self.url, valid_data)
+#     self.assertRedirects(
+#         response,
+#         reverse(settings.LOGIN_REDIRECT_URL),  # 2-1
+#         status_code=302,
+#         target_status_code=200,
+#     )
+#     self.assertTrue(User.objects.filter(username=valid_data["username"]).exists())
+#     self.assertIn(SESSION_KEY, self.client.session)
 
 
 #     # 異常系test
@@ -570,6 +571,7 @@ class TestSignupView(TestCase):
 #         self.assertNotIn(SESSION_KEY, self.client.session)
 
 
+# Case 3-02 & 4-01
 class TestUserProfileView(TestCase):
     model = Tweet
 
@@ -578,7 +580,7 @@ class TestUserProfileView(TestCase):
         self.client.login(username="tester", password="testpassword")
         self.tweet = Tweet.objects.create(body="test", creator=self.user)
         self.client.logout()
-        self.user = User.objects.create_user(username="tester2", password="testpassword")
+        User.objects.create_user(username="tester2", password="testpassword")
         self.client.login(username="tester2", password="testpassword")
         self.tweet = Tweet.objects.create(body="test2", creator=self.user)
         User.objects.create_user(username="tester3", password="testpassword")
@@ -590,9 +592,9 @@ class TestUserProfileView(TestCase):
         url = reverse("accounts:follow", kwargs={"username": "tester4"})
         self.client.get(url)
 
-    # Case 3-2(response & create_tweet), 4-1(Follow & Follower)
+    # 3-02(response & create_tweet), 4-01(Follow & Follower)
     def test_success_get(self):
-        url = reverse("accounts:user_profile", kwargs={"username": self.user.username})
+        url = reverse("accounts:user_profile", kwargs={"username": "tester"})
         response = self.client.get(url)
         tweet_context = response.context["object_list"]
         true_context = Model.objects.filter(creator__username=self.user)
@@ -614,13 +616,14 @@ class TestUserProfileView(TestCase):
 class TestFollowView(TestCase):
     def setUp(self):
         User.objects.create_user(username="tester2", password="testpassword")
-        self.user = User.objects.create_user(username="tester", password="testpassword")
-        self.client.login(username="tester", password="testpassword")
+        self.user = User.objects.create_user(username="tester1", password="testpassword")
+        self.client.login(username="tester1", password="testpassword")
+        self.base_records = Model2.objects
 
-    # Case 4-02
+    # 4-02
     def test_success_post(self):
         url = reverse("accounts:follow", kwargs={"username": "tester2"})
-        base = FriendShip.objects.all().count()
+        count = self.base_records.count()
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
@@ -629,83 +632,92 @@ class TestFollowView(TestCase):
             status_code=302,
             target_status_code=200,
         )
-        self.assertEqual(FriendShip.objects.all().count(), base + 1)
+        self.assertEqual(Model2.objects.count(), count + 1)
+        self.assertEqual(Model2.objects.last().follow.username, "tester1")
+        self.assertEqual(Model2.objects.last().follower.username, "tester2")
 
-    # Case 4-03
+    # 4-03
     def test_failure_post_with_not_exist_user(self):
         url = reverse("accounts:follow", kwargs={"username": "hogeta"})
-        base = FriendShip.objects.all().count()
+        base_records = Model2.objects.all()
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(FriendShip.objects.all().count(), base)
+        self.assertQuerysetEqual(Model2.objects.all(), base_records.all())
 
-    # Case 4-04
+    # 4-04
     def test_failure_post_with_self(self):
-        url = reverse("accounts:follow", kwargs={"username": self.user.username})
-        base = FriendShip.objects.all().count()
+        url = reverse("accounts:follow", kwargs={"username": "tester1"})
+        base_records = FriendShip.objects.all()
         response = self.client.get(url)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(FriendShip.objects.all().count(), base)
+        self.assertQuerysetEqual(FriendShip.objects.all(), base_records.all())
 
 
+# Case 4-05, 06, 07
 class TestUnfollowView(TestCase):
-    def SetUp(self):
+    def setUp(self):
+        self.user = User.objects.create_user(username="tester1", password="testpassword")
+        self.client.login(username="tester1", password="testpassword")
         User.objects.create_user(username="tester2", password="testpassword")
-        User.objects.create_user(username="tester3", password="testpassword")
-        self.user = User.objects.create_user(username="tester", password="testpassword")
-        self.client.login(username="tester", password="testpassword")
         url = reverse("accounts:follow", kwargs={"username": "tester2"})
         self.client.get(url)
+        self.base_records = Model2.objects.all()
 
+    # 4-05
     def test_success_post(self):
         url = reverse("accounts:unfollow", kwargs={"username": "tester2"})
-        base = FriendShip.objects.all().count()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertQuerysetEqual(Model2.objects.all(), self.base_records.exclude(follow=self.user.id))
 
-    def test_failure_post_with_not_exist_tweet(self):
+    # 4-06
+    def test_failure_post_with_not_exist_user(self):
         url = reverse("accounts:unfollow", kwargs={"username": "hogeta"})
-        base = FriendShip.objects.all().count()
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(FriendShip.objects.all().count(), base)
+        self.assertQuerysetEqual(Model2.objects.all(), self.base_records)
 
+    # 4-07
     def test_failure_post_with_self(self):
-        url = reverse("accounts:unfollow", kwargs={"username": self.user.username})
-        base = FriendShip.objects.all().count()
+        url = reverse("accounts:unfollow", kwargs={"username": "tester1"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(FriendShip.objects.all().count(), base)
+        self.assertQuerysetEqual(Model2.objects.all(), self.base_records)
 
 
+# Case 4-08
 class TestFollowingListView(TestCase):
-    def SetUp(self):
+    def setUp(self):
+        self.user = User.objects.create_user(username="tester", password="testpassword")
         User.objects.create_user(username="tester2", password="testpassword")
         User.objects.create_user(username="tester3", password="testpassword")
-        self.user = User.objects.create_user(username="tester", password="testpassword")
         self.client.login(username="tester", password="testpassword")
         url = reverse("accounts:follow", kwargs={"username": "tester2"})
         self.client.get(url)
         url = reverse("accounts:follow", kwargs={"username": "tester3"})
         self.client.get(url)
 
+    # 4-08
     def test_success_get(self):
-        url = reverse("accounts:following_list", kwargs={"username": self.user.username})
+        url = reverse("accounts:following_list", kwargs={"username": "tester"})
         print(url)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
 
+# Case 4-09
 class TestFollowerListView(TestCase):
-    def SetUp(self):
-        User.objects.create_user(username="tester", password="testpassword")
+    def setUp(self):
+        User.objects.create_user(username="tester1", password="testpassword")
         self.user = User.objects.create_user(username="tester2", password="testpassword")
-        self.client.login(username="tester", password="testpassword")
-        self.url = reverse("accounts:follower", kwargs={"username": "tester"})
+        self.client.login(username="tester1", password="testpassword")
+        self.url = reverse("accounts:follow", kwargs={"username": "tester2"})
         self.client.logout()
         self.user = User.objects.create_user(username="tester3", password="testpassword")
         self.client.login(username="tester3", password="testpassword")
 
+    # 4-09
     def test_success_get(self):
-        url = reverse("accounts:follower_list", kwargs={"username": "tester"})
-        print(url)
+        url = reverse("accounts:follower_list", kwargs={"username": "tester1"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
