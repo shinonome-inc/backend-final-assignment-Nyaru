@@ -31,13 +31,25 @@ class UserProfileView(ListView, LoginRequiredMixin):
     model = Tweet
 
     def get_queryset(self, **kwargs):
-        records = super().get_queryset(**kwargs)  # Article.objects.all() と同じ結果
-        records = records.filter(creator__username=self.kwargs["username"])
-        records = records.order_by("-created")
-        return records
+        user = get_object_or_404(User, username=self.kwargs["username"])
+        return Tweet.objects.filter(creator__username=user.username).order_by("-created")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = get_object_or_404(User, username=self.kwargs["username"])
+        context["user"] = user
+        context["follow"] = FriendShip.objects.filter(follow=user.id).count()
+        context["follower"] = FriendShip.objects.filter(follower=user.id).count()
+        context["check"] = FriendShip.objects.filter(follow=self.request.user, follower=user.id).exists()
+        return context
+
+    # def get_queryset(self, **kwargs):
+    #     records = super().get_queryset(**kwargs)  # Article.objects.all() と同じ結果
+    #     records = records.filter(creator__username=self.kwargs["username"])
+    #     records = records.order_by("-created")
+    #     return records
 
 
-# CreateViewはTempleteViewを継承しているのでTempleteが必要。
 class FollowView(LoginRequiredMixin, View):
     def get(self, request, username):
         user_to_follow = get_object_or_404(User, username=username)
@@ -70,23 +82,31 @@ class UnFollowView(LoginRequiredMixin, View):
         return HttpResponseRedirect(reverse_lazy("accounts:user_profile", kwargs={"username": username}))
 
 
-class FollowingListView(TemplateView, LoginRequiredMixin):
+class FollowingListView(ListView, LoginRequiredMixin):
 
     template_name = "accounts/following_list.html"
+    context_object_name = "following_list"
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs["username"])
+        return FriendShip.objects.filter(follow=user.id)
 
     def get_context_data(self, **kwargs):
-        user = get_object_or_404(User, username=self.kwargs["username"])
         context = super().get_context_data(**kwargs)
-        context["following_list"] = FriendShip.objects.filter(follow=user.id)
+        context["user"] = get_object_or_404(User, username=self.kwargs["username"])
         return context
 
 
-class FollowerListView(TemplateView, LoginRequiredMixin):
+class FollowerListView(ListView, LoginRequiredMixin):
 
     template_name = "accounts/follower_list.html"
+    context_object_name = "follower_list"
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs["username"])
+        return FriendShip.objects.filter(follower=user.id)
 
     def get_context_data(self, **kwargs):
-        user = get_object_or_404(User, username=self.kwargs["username"])
         context = super().get_context_data(**kwargs)
-        context["follower_list"] = FriendShip.objects.filter(follower=user.id)
+        context["user"] = get_object_or_404(User, username=self.kwargs["username"])
         return context
