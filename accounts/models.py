@@ -9,4 +9,11 @@ class User(AbstractUser):
         swappable = "AUTH_USER_MODEL"
 
 
-# class FriendShip(models.Model):
+class Person(models.Model):
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+
+
+class FriendShip(models.Model):
+    follow = models.ForeignKey(User, related_name="follower", on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, related_name="follow", on_delete=models.CASCADE)
